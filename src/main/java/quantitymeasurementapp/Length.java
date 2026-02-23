@@ -1,6 +1,5 @@
 package quantitymeasurementapp;
 
-
 public class Length {
 	private static final double EPSILON = 0.0001;
 	private double value;
@@ -24,7 +23,7 @@ public class Length {
      public Length() {};
    
      public Length(double value,LengthUnit len) throws InvalidUnitMeasurementException {
-    	 if(Double.isNaN(value)) {
+    	 if(Double.isNaN(value)||Double.isInfinite(value)) {
     		 throw new IllegalArgumentException("Invalid Input");
     	 }
     	 if(len==null) {
@@ -34,6 +33,9 @@ public class Length {
     	 this.len = len;
      }
      
+     public double getValue() {
+    	 return value;
+     }
      private double convertToBaseUnit() {
     	 return value*len.getConversionFactor();
      }
@@ -55,6 +57,18 @@ public class Length {
         return this.compare(l);
     }
      
+     
+     @Override
+	public String toString() {
+		return "Length [value=" + value + ", len=" + len + "]";
+	}
+
+	 public Length convertTo(LengthUnit unit) throws InvalidUnitMeasurementException {
+    	 double converted = (this.value*len.getConversionFactor())/unit.getConversionFactor();
+    	 return new Length(converted,unit);
+     }
+	 
+	 
      public static void main(String[] args) throws InvalidUnitMeasurementException {
 		Length len1 = new Length(1,Length.LengthUnit.FEET);
 		Length len2 = new Length(12,Length.LengthUnit.INCHES);
