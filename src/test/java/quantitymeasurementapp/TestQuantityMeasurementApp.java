@@ -300,5 +300,94 @@ public class TestQuantityMeasurementApp {
     @Test
     void testConversion_PrecisionTolerance() throws InvalidUnitMeasurementException {
         assertEquals(1.0,QuantityMeasurementApp.demonstrateLengthConversion(2.54, LengthUnit.CENTIMETRE,LengthUnit.INCHES).getValue(), 1e-6);
+    } 
+    
+    //Test Methods For addition logic 
+    
+    @Test
+    public void testAdditionSameUnitFeetPlusFeet() throws InvalidUnitMeasurementException{
+    	len1 = new Length(1.0,LengthUnit.FEET);
+    	len2 = new Length(2.0,LengthUnit.FEET);
+    	assertEquals(3.0,len1.add(len2).getValue());
+    }
+    
+    @Test
+    public void testAdditionSameUnitInchPlusInch() throws InvalidUnitMeasurementException{
+    	len1 = new Length(6.0,LengthUnit.INCHES);
+    	len2 = new Length(6.0,LengthUnit.INCHES);
+    	assertEquals(12.0,len1.add(len2).getValue());
+    }
+    
+    @Test
+    public void testAdditionCrossUnitFeetPlusInches() throws InvalidUnitMeasurementException {
+    	len1 = new Length(1.0,LengthUnit.FEET);
+    	len2 = new Length(12.0,LengthUnit.INCHES);
+    	assertEquals(2.0,len1.add(len2).getValue());
+    }
+    @Test
+    public void testAdditionCrossUnitInchePlusFeet() throws InvalidUnitMeasurementException{
+    	len1 = new Length(12.0,LengthUnit.INCHES);
+    	len2 = new Length(1.0,LengthUnit.FEET);
+    	assertEquals(24.0,len1.add(len2).getValue());
+    }
+    
+    @Test
+    public void testAdditionCrossUnitYardPlusFeet() throws InvalidUnitMeasurementException{
+    	len1 = new Length(1.0,LengthUnit.YARD);
+    	len2 = new Length(3.0,LengthUnit.FEET);
+    	assertEquals(2.0,len1.add(len2).getValue());
+    }
+    
+    @Test
+    public void testAdditionCrossUnitCentimeterPlusInch() throws InvalidUnitMeasurementException{
+    	len1 = new Length(2.54,LengthUnit.CENTIMETRE);
+    	len2 = new Length(1.0,LengthUnit.INCHES);
+    	assertEquals(5.08,len1.add(len2).getValue(),0.0001);
+    }
+    
+    @Test
+    public void testAdditionCommutativity() throws InvalidUnitMeasurementException{
+    	len1 = new Length(2.54,LengthUnit.CENTIMETRE);
+    	len2 = new Length(1.0,LengthUnit.INCHES);
+    	Length l1 = len1.add(len2);
+    	Length l2 = len2.add(len1);
+    	l2 = l2.convertTo(l1.getLen());
+    	assertTrue(l1.equals(l2));
+    }
+    
+    @Test
+    public void testadditionWithZero() throws InvalidUnitMeasurementException {
+    	len1 = new Length(5.0,LengthUnit.FEET);
+    	len2 = new Length(0.0,LengthUnit.INCHES);
+    	assertEquals(5.0,len1.add(len2).getValue());
+    }
+    
+    @Test
+    public void testAdditionNegativeValues() throws InvalidUnitMeasurementException{
+    	len1 = new Length(5.0,LengthUnit.FEET);
+    	len2 = new Length(-3.0,LengthUnit.FEET);
+    	assertEquals(2.0,len1.add(len2).getValue());
+    }
+    
+    @Test
+    public void testAdditionNullSecondOperand() throws InvalidUnitMeasurementException{
+    	len1 = new Length(1.0,LengthUnit.FEET);
+    	assertThrows(IllegalArgumentException.class,()->{
+    		QuantityMeasurementApp.demonstrateLengthAddition(len1,null);
+    	});
+    }
+    
+    @Test
+    public void testAdditionLargeValues() throws InvalidUnitMeasurementException{
+    	len1 = new Length(1e-6,LengthUnit.FEET);
+    	len2 = new Length(1e-6,LengthUnit.FEET);
+    	assertEquals(2e-6,len1.add(len2).getValue());
+    }
+    
+    @Test
+    public void testAdditionSmallValues() throws InvalidUnitMeasurementException{
+    	len1 = new Length(0.001,LengthUnit.FEET);
+    	len2 = new Length(0.002,LengthUnit.FEET);
+    	assertEquals(0.003,len1.add(len2).getValue(),0.0001);
     }
 	 }
