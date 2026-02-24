@@ -1,5 +1,6 @@
 package quantitymeasurementapp;
 
+
 public enum LengthUnit{
 	FEET(1.0),
     INCHES(1.0 / 12.0),
@@ -17,5 +18,8 @@ public enum LengthUnit{
 	}
 	public double convertToBaseUnit(double value) {
    	 return value*this.getConversionFactor();
+    }
+    public double convertFromBaseUnit(double value) {
+    	return (LengthUnit.FEET.getConversionFactor()*value)/this.getConversionFactor();
     }
 }
