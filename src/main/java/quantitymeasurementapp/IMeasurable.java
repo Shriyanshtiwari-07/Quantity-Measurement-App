@@ -1,6 +1,5 @@
 package quantitymeasurementapp;
 
-
 public interface IMeasurable {
      double getConversionFactor();
      
@@ -9,4 +8,6 @@ public interface IMeasurable {
      double convertFromBaseUnit(double value);
      
      String getUnitName();
+     
+  
 }
