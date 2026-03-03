@@ -1,5 +1,6 @@
 package quantitymeasurementapp;
 
+
 import java.util.function.DoubleBinaryOperator;
 
 public class Quantity<T extends IMeasurable> {
@@ -107,7 +108,14 @@ public class Quantity<T extends IMeasurable> {
     	return result;
     }
 
-
+    public Quantity<T> performArithmetic(Quantity<T> other, ArithemeticOperations op) {
+        // Step 5: Fail-fast validation
+        this.unit.validateOperationSupport(op.name());
+        
+        double resultBase = op.compute(this.unit.convertToBaseUnit(this.value), 
+                                     other.unit.convertToBaseUnit(other.value));
+        return new Quantity<>(this.unit.convertFromBaseUnit(resultBase), this.unit);
+    }
 	 @Override
 	 public String toString() {
 		return "Quantity [value=" + value + ", unit=" + unit + "]";
