@@ -209,4 +209,91 @@ main
 
 ---
 
+## 📅 22 Feb 2026  
+### 🔹 UC11 – Volume Measurement Support with Unit Interface Integration  
+**Branch:** `feature/UC11-VolumeMeasurement`
 
+### 🎯 Objective
+- Extend generic Quantity system to support Volume
+- Implement unit conversion within same category
+- Maintain strict category isolation
+
+### ✅ Implementation
+- Created `VolumeUnit` enum implementing `Unit` interface
+- Added units:
+  - Liter
+  - Milliliter
+- Implemented conversion logic inside enum
+- Enabled equality comparison across different volume units
+- Prevented cross-category comparison (Volume vs Length/Weight)
+- Preserved type safety using `Quantity<T extends Unit>`
+
+🔗 Branch Link:  
+https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC11-VOlumeMeasurement
+
+---
+
+## 📅 23 Feb 2026  
+### 🔹 UC12 – Subtraction and Division for Compatible Quantities  
+**Branch:** `feature/UC12-ArithmeticOperations`
+
+### 🎯 Objective
+- Introduce arithmetic operations
+- Maintain dimensional correctness
+- Restrict arithmetic within same measurement category
+
+### ✅ Implementation
+- Implemented subtraction between compatible quantities
+- Implemented division operation
+- Converted values to base unit before arithmetic
+- Added validation for incompatible categories
+- Ensured safe arithmetic execution
+
+🔗 Branch Link:  
+https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC12-ArithmeticOperations
+
+---
+
+## 📅 24 Feb 2026  
+### 🔹 UC13 – Centralized Arithmetic Logic Refactoring  
+**Branch:** `feature/UC13-CentralizedArithmeticLogic`
+
+### 🎯 Objective
+- Remove duplicated arithmetic logic
+- Centralize validation and arithmetic rules
+- Improve maintainability
+
+### ✅ Implementation
+- Created centralized arithmetic validation/service class
+- Moved arithmetic logic out of individual unit implementations
+- Reduced code duplication
+- Improved separation of concerns
+- Applied DRY principle
+
+🔗 Branch Link:  
+https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC13-CentralizedArithmeticLogic
+
+---
+
+
+## 📅 25 Feb 2026  
+### 🔹 UC14 – Temperature Measurement with Selective Arithmetic  
+**Branch:** `feature/UC14-TemperatureMeasurementwithSelectiveArithmetic`
+
+### 🎯 Objective
+- Add Temperature measurement category
+- Handle non-linear conversion logic
+- Restrict invalid arithmetic operations
+
+### ✅ Implementation
+- Created `TemperatureUnit` enum implementing `Unit`
+- Added:
+  - Celsius
+  - Fahrenheit
+- Implemented offset-based conversion formula
+- Allowed equality comparison
+- Restricted arithmetic operations on absolute temperatures
+- Preserved category safety
+
+🔗 Branch Link:  
+https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC14-TemperatureMeasurementwithSelectiveArithmetic
