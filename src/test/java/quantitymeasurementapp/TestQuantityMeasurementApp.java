@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import quantitymeasurementapp.InvalidUnitMeasurementException;
 import quantitymeasurementapp.LengthUnit;
 import quantitymeasurementapp.Quantity;
+import quantitymeasurementapp.TemperatureUnit;
 import quantitymeasurementapp.VolumneUnit;
 import quantitymeasurementapp.WeightUnit;
 
@@ -827,5 +828,63 @@ public class TestQuantityMeasurementApp {
 	    	assertThrows(ArithmeticException.class,()->{
 	    		new Quantity<LengthUnit>(10.0,LengthUnit.FEET).division(new Quantity<LengthUnit>(0.0,LengthUnit.FEET));
 	    	});
+	     }
+	     
+	     @Test
+	     public void testTemperatureEquality_CelsiusToCelsius_SameValue() {
+	    	 assertTrue(new Quantity<TemperatureUnit>(0.0, TemperatureUnit.CELSIUS).equals(new Quantity<TemperatureUnit>(0.0, TemperatureUnit.CELSIUS)));
+	     }
+	     
+	     private final double EPSILON = 0.0001;
+
+	     @Test
+	     void testTemperatureEquality_FahrenheitToFahrenheit_SameValue() {
+	         Quantity<TemperatureUnit> f1 = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+	         Quantity<TemperatureUnit> f2 = new Quantity<>(32.0,TemperatureUnit.FAHRENHEIT);
+	         assertEquals(f1, f2);
+	     }
+
+	     @Test
+	     void testTemperatureEquality_CelsiusToFahrenheit_0Celsius32Fahrenheit() {
+	         Quantity<TemperatureUnit> celsius = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+	         Quantity<TemperatureUnit> fahrenheit = new Quantity<>(32.0,TemperatureUnit.FAHRENHEIT);
+	         assertTrue(celsius.equals(fahrenheit), "0°C should equal 32°F");
+	     }
+
+	     @Test
+	     void testTemperatureEquality_CelsiusToFahrenheit_100Celsius212Fahrenheit() {
+	         Quantity<TemperatureUnit> boilingC = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+	         Quantity<TemperatureUnit> boilingF = new Quantity<>(212.0, TemperatureUnit.FAHRENHEIT);
+	         assertTrue(boilingC.equals(boilingF), "100°C should equal 212°F");
+	     }
+
+	     @Test
+	     void testTemperatureEquality_CelsiusToFahrenheit_Negative40Equal() {
+	         // -40 is the unique point where C and F scales intersect
+	         Quantity<TemperatureUnit> c40 = new Quantity<>(-40.0, TemperatureUnit.CELSIUS);
+	         Quantity<TemperatureUnit> f40 = new Quantity<>(-40.0, TemperatureUnit.FAHRENHEIT);
+	         assertEquals(c40, f40);
+	     }
+
+	     @Test
+	     void testTemperatureEquality_SymmetricProperty() {
+	         Quantity<TemperatureUnit> a = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+	         Quantity<TemperatureUnit> b = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+	         assertTrue(a.equals(b) && b.equals(a));
+	     }
+
+	     @Test
+	     void testTemperatureVsLengthIncompatibility() {
+	         Quantity<TemperatureUnit> temp = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+	         Quantity<LengthUnit> length = new Quantity<>(100.0, LengthUnit.FEET);
+	        
+	     }
+
+	     @Test
+	     void testTemperatureVsWeightIncompatibility() {
+	         Quantity<TemperatureUnit> temp = new Quantity<>(50.0, TemperatureUnit.CELSIUS);
+	         Quantity<WeightUnit> weight = new Quantity<>(50.0, WeightUnit.KG);
+	         
+	         assertFalse(temp.equals(weight));
 	     }
 }
