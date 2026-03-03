@@ -1,6 +1,5 @@
 package quantitymeasurementapp;
 
-
 public class QuantityMeasurementApp {
 
     public static<T extends IMeasurable> boolean demonstrateEquality(Quantity<T> quantity1,Quantity<T> quantity2) {
@@ -102,5 +101,31 @@ public class QuantityMeasurementApp {
         System.out.println("Centralized Division Feet by Feet : "+demonstrateDivision(new Quantity<LengthUnit>(10.0,LengthUnit.FEET), new Quantity<LengthUnit>(2.0,LengthUnit.FEET)));
         
         System.out.println("Centralized Division Inches by feet : "+demonstrateDivision(new Quantity<LengthUnit>(24.0,LengthUnit.INCHES), new Quantity<LengthUnit>(2.0,LengthUnit.FEET)));
+        
+        //Temperature Unit
+        Quantity<TemperatureUnit> temp1 = new Quantity<>(0.0,
+        		TemperatureUnit.CELSIUS);
+        		Quantity<TemperatureUnit> temp2 = new Quantity<>(32.0,
+        		TemperatureUnit.FAHRENHEIT);
+        		System.out.println("0C equals 32°F: "+ temp1.equals(temp2));
+
+        		// Conversion Demonstration
+        		Quantity<TemperatureUnit> celsius = new Quantity<>(100.0,
+        		TemperatureUnit.CELSIUS);
+        		Quantity<TemperatureUnit> fahrenheit = celsius.convertTo(
+        		TemperatureUnit.FAHRENHEIT) ;
+        		System.out.println("100C = " + fahrenheit.getValue() + "°F");
+
+        		// Unsupported Operation Demonstration
+        		try {
+        		celsius.add(new Quantity<>(50.0, TemperatureUnit.CELSIUS));
+        		} catch (UnsupportedOperationException e) {
+        		System.out.println("Cannot add absolute temperatures: " +
+        		e.getMessage());
+        		}
+        		
+       System.out.println("Is Kelvin equal to celsius : "+demonstrateEquality(new Quantity<TemperatureUnit>(273.15, TemperatureUnit.KELVIN),new Quantity<TemperatureUnit>(0.0, TemperatureUnit.CELSIUS)));
+       
+     
 	}
 }
