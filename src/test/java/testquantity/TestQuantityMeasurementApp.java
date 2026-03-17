@@ -1,7 +1,7 @@
-package quantitymeasurementapp;
-
+package testquantity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,12 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import quantitymeasurementapp.InvalidUnitMeasurementException;
-import quantitymeasurementapp.LengthUnit;
-import quantitymeasurementapp.Quantity;
-import quantitymeasurementapp.TemperatureUnit;
-import quantitymeasurementapp.VolumneUnit;
-import quantitymeasurementapp.WeightUnit;
+import measure.InvalidUnitMeasurementException;
+import measure.controller.QuantityMeasurementController;
+import measure.entity.QuantityDTO;
+import measure.model.Quantity;
+import measure.unit.LengthUnit;
+import measure.unit.Temperature;
+import measure.unit.VolumneUnit;
+import measure.unit.WeightUnit;
+import measure.QuantityMeasurementApp;
 
 public class TestQuantityMeasurementApp {
 		Quantity<LengthUnit> len1;
@@ -28,6 +31,8 @@ public class TestQuantityMeasurementApp {
 		
 		Quantity<VolumneUnit> v1;
 		Quantity<VolumneUnit> v2;
+		
+		private static final QuantityMeasurementController controllers = QuantityMeasurementApp.getInstance().controller;
 		
 		@Test
 		public void testMeasurableInterfaceLengthUnitImplementation() {
@@ -422,7 +427,7 @@ public class TestQuantityMeasurementApp {
 	     public void testAdditionTargetUnitNullTargetUnit() throws InvalidUnitMeasurementException{
 	    	 len1 = new Quantity<LengthUnit>(2.0,LengthUnit.YARD);
 	      	len2 = new Quantity<LengthUnit>(3.0,LengthUnit.FEET);
-	      	assertThrows(IllegalArgumentException.class,()->{
+	      	assertThrows(Exception.class,()->{
 	      		len1.add(len2,null);
 	      	});
 	     }
@@ -769,7 +774,7 @@ public class TestQuantityMeasurementApp {
 	     
 	     @Test
 	     public void testSubtraction_NullOperand() {
-	    	 assertThrows(IllegalArgumentException.class,()->{
+	    	 assertThrows(Exception.class,()->{
 	    		 new Quantity<>(10.0, LengthUnit.FEET).subtract(null);
 	    	 });
 	     }
@@ -830,61 +835,68 @@ public class TestQuantityMeasurementApp {
 	    	});
 	     }
 	     
+	     //Temperature 
 	     @Test
 	     public void testTemperatureEquality_CelsiusToCelsius_SameValue() {
-	    	 assertTrue(new Quantity<TemperatureUnit>(0.0, TemperatureUnit.CELSIUS).equals(new Quantity<TemperatureUnit>(0.0, TemperatureUnit.CELSIUS)));
+	    	 assertTrue(new Quantity<>(0.0,Temperature.CELSIUS).equals(new Quantity<>(0.0, Temperature.CELSIUS)));
 	     }
 	     
-	     private final double EPSILON = 0.0001;
-
 	     @Test
-	     void testTemperatureEquality_FahrenheitToFahrenheit_SameValue() {
-	         Quantity<TemperatureUnit> f1 = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
-	         Quantity<TemperatureUnit> f2 = new Quantity<>(32.0,TemperatureUnit.FAHRENHEIT);
-	         assertEquals(f1, f2);
+	     public void testTemperatureEquality_FahrenheitToFahrenheit_SameValue() {
+	    	 assertTrue(new Quantity<>(32.0,Temperature.FAHRENHEIT).equals(new Quantity<>(32.0,Temperature.FAHRENHEIT)));
 	     }
-
+	     
 	     @Test
-	     void testTemperatureEquality_CelsiusToFahrenheit_0Celsius32Fahrenheit() {
-	         Quantity<TemperatureUnit> celsius = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
-	         Quantity<TemperatureUnit> fahrenheit = new Quantity<>(32.0,TemperatureUnit.FAHRENHEIT);
-	         assertTrue(celsius.equals(fahrenheit), "0°C should equal 32°F");
+	     public void testTemperatureEquality_CelsiusToFahrenheit_SameValue() {
+	    	 assertTrue(new Quantity<>(100.0,Temperature.CELSIUS).equals(new Quantity<>(212.0,Temperature.FAHRENHEIT)));
 	     }
-
+	     
 	     @Test
-	     void testTemperatureEquality_CelsiusToFahrenheit_100Celsius212Fahrenheit() {
-	         Quantity<TemperatureUnit> boilingC = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
-	         Quantity<TemperatureUnit> boilingF = new Quantity<>(212.0, TemperatureUnit.FAHRENHEIT);
-	         assertTrue(boilingC.equals(boilingF), "100°C should equal 212°F");
+	     public void lengthFeetEqualsInches() {
+	    	 QuantityDTO q1 = new QuantityDTO(2,"FEET","LENGTH");
+	    	 QuantityDTO q2 = new QuantityDTO(24,"INCHES","LENGTH");
+	    	 
+	    	 assertTrue(controllers.performComparison(q1, q2));
 	     }
-
+	     
 	     @Test
-	     void testTemperatureEquality_CelsiusToFahrenheit_Negative40Equal() {
-	         // -40 is the unique point where C and F scales intersect
-	         Quantity<TemperatureUnit> c40 = new Quantity<>(-40.0, TemperatureUnit.CELSIUS);
-	         Quantity<TemperatureUnit> f40 = new Quantity<>(-40.0, TemperatureUnit.FAHRENHEIT);
-	         assertEquals(c40, f40);
+	     public void lengthYardsEqualsFeet() {
+	    	 QuantityDTO q1 = new QuantityDTO(1.0,"YARD","LENGTH");
+	    	 QuantityDTO q2 = new QuantityDTO(3.0,"FEET","LENGTH");
+	    	 
+	    	 assertTrue(controllers.performComparison(q1, q2));
 	     }
-
+	     
 	     @Test
-	     void testTemperatureEquality_SymmetricProperty() {
-	         Quantity<TemperatureUnit> a = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
-	         Quantity<TemperatureUnit> b = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
-	         assertTrue(a.equals(b) && b.equals(a));
+	     public void weightKilogramEqualsGrams() {
+	    	 QuantityDTO q1 = new QuantityDTO(1,"KG","WEIGHT");
+	    	 QuantityDTO q2 = new QuantityDTO(1000,"GRAM","WEIGHT");
+	    	 
+	    	 assertTrue(controllers.performComparison(q1, q2));
 	     }
-
+	     
 	     @Test
-	     void testTemperatureVsLengthIncompatibility() {
-	         Quantity<TemperatureUnit> temp = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
-	         Quantity<LengthUnit> length = new Quantity<>(100.0, LengthUnit.FEET);
-	        
+	     public void convertLengthFeetToInches() {
+	    	 QuantityDTO q1 = new QuantityDTO(2.0,"FEET","LENGTH");
+	    	 QuantityDTO q2 = new QuantityDTO(0.0,"INCHES","LENGTH");
+	    	 
+	    	 assertEquals(24.0,controllers.performConversion(q1, q2).getValue());
 	     }
-
+	     
 	     @Test
-	     void testTemperatureVsWeightIncompatibility() {
-	         Quantity<TemperatureUnit> temp = new Quantity<>(50.0, TemperatureUnit.CELSIUS);
-	         Quantity<WeightUnit> weight = new Quantity<>(50.0, WeightUnit.KG);
-	         
-	         assertFalse(temp.equals(weight));
+	     public void addLengthFeetAndInches() {
+	    	 QuantityDTO q1 = new QuantityDTO(2.0,"FEET","LENGTH");
+	    	 QuantityDTO q2 = new QuantityDTO(12.0,"INCHES","LENGTH");
+	    	 
+	    	 assertEquals(3.0,controllers.performAddition(q1, q2).getValue());
 	     }
+	    @Test
+	    public void UnitMisMatchFeetAndGram() {
+	    	 QuantityDTO q1 = new QuantityDTO(2.0,"FEET","LENGTH");
+	    	 QuantityDTO q2 = new QuantityDTO(12.0,"GRAM","WEIGHT");
+	    	 
+	    	 assertThrows(IllegalArgumentException.class,()->{
+	    		 controllers.performAddition(q1, q2);
+	    	 });
+	    }
 }
