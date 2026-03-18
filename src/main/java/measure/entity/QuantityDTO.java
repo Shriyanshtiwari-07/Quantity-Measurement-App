@@ -1,6 +1,5 @@
 package measure.entity;
 
-
 interface IMeasurableUnit{
 	String getUnitName();
 	String getMeasurementType();
