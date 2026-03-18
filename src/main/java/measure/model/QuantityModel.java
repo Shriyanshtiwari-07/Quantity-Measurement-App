@@ -1,6 +1,5 @@
 package measure.model;
 
-
 import measure.unit.IMeasurable;
 
 public class QuantityModel<U extends IMeasurable> {
