@@ -1,0 +1,11 @@
+package com.app.quantity_measurement_app.exception;
+
+public class UnsupportedOperationException extends RuntimeException {
+		
+private static final long serialVersionUID = 1L;
+	
+	public UnsupportedOperationException(String msg) {
+		super(msg);
+	}
+	
+}
