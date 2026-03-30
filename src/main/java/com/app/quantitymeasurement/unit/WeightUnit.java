@@ -1,7 +1,6 @@
 package com.app.quantitymeasurement.unit;
 
 
-
 public enum WeightUnit implements IMeasurable{
     KG(1.0),
 	GRAM(0.001),
