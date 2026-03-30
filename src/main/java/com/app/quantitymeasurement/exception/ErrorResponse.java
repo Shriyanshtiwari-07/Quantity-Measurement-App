@@ -1,6 +1,5 @@
 package com.app.quantitymeasurement.exception;
 
-
 import java.time.LocalDateTime;
 
 public class ErrorResponse {

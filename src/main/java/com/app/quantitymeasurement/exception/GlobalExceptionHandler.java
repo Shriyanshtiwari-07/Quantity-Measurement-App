@@ -1,6 +1,5 @@
 package com.app.quantitymeasurement.exception;
 
-
 import java.util.logging.Logger;
 
 import java.util.stream.Collectors;
