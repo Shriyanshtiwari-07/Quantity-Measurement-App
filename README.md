@@ -1,299 +1,232 @@
-# Quantity Measurement App
-# 🚀 Quantity Measurement Application  
-## 📏 Test-Driven Development (TDD) | OOP | Clean Code | DRY Principle  
+# 📏 QuantityMeasurementApp (UC21 - Microservices)
 
----
+> A Java-based Spring Boot microservices platform for quantity measurement, authentication, and API routing. Built using Test-Driven Development (TDD), this project evolves the original quantity-measurement domain into a production-style distributed architecture with service discovery, gateway-based security, and centralized monitoring.
 
-## 🧠 Project Overview
+### 📖 Overview
 
-The **Quantity Measurement Application** is designed to validate equality, conversion, and arithmetic operations between different measurement units such as Feet, Inches, Yards, etc.
+- Modular Spring Boot system split into independent services for measurement logic, user/authentication, service discovery, gateway routing, and admin monitoring.
+- Maintains the original UC1-UC19 measurement and authentication capabilities while introducing UC21 microservices architecture and deployment workflows.
+- Designed for local development with Docker Compose and production deployment with environment-driven configuration.
 
-This project was implemented incrementally using:
+### ✅ Implemented Features
 
-- ✅ Test-Driven Development (TDD)
-- ✅ Feature Branch Workflow
-- ✅ Clean Code Practices
-- ✅ DRY (Don't Repeat Yourself) Principle
-- ✅ Proper Unit Conversion Strategy
+- 🧩 **UC1-UC18 - Core Domain and Security Evolution:**
+  - Quantity measurement capabilities for length, weight, volume, and temperature.
+  - Generic quantity model with conversion and arithmetic support (capability-aware for temperature).
+  - Spring Boot REST APIs, JPA persistence, validation, global exception handling, and actuator endpoints.
+  - JWT authentication, Google/GitHub OAuth2 login, OTP-based password reset flow, and role-aware access control.
 
----
+8- 🧩 **UC21 - Microservices Architecture:**
 
-# 🌳 Git Workflow
+- Splits the backend into five services:
+  - `measurement-service` - quantity operations and measurement history.
+  - `user-service` - authentication, user management, OAuth2, OTP, and email notifications.
+  - `api-gateway` - single public entrypoint, JWT validation, and request routing.
+  - `eureka-server` - service discovery/registry.
+  - `admin-server` - Spring Boot Admin dashboard for service health/metrics.
+- Adds service discovery using Eureka and load-balanced gateway routing with `lb://` URIs.
+- Centralizes external API exposure at gateway port `8080`; internal services remain independently deployable.
+- Supports local single-command startup using Docker Compose with health-ordered boot sequence.
+- Supports production override via `docker-compose.prod.yml` using RDS and restricted port exposure.
 
+### 🧰 Tech Stack
+
+- **Java 17+** - core language
+- **Maven** - build and dependency management
+
+#### 🚀 Backend Framework
+
+- **Spring Boot 3.2.2** - base framework
+- **Spring Web** - REST APIs
+- **Spring Data JPA** - persistence layer
+- **Spring Security + OAuth2 Client** - JWT and social auth flows
+- **Spring Cloud Gateway** - API gateway and routing
+- **Spring Cloud Netflix Eureka** - service discovery
+- **Spring Boot Admin** - service monitoring UI
+- **Spring Boot Actuator** - health/info/metrics
+
+#### 🗄️ Database
+
+- **H2** - dev/test persistence
+- **MySQL** - production persistence
+
+#### 📄 API Documentation
+
+- **Swagger / OpenAPI (springdoc-openapi)** - interactive API docs for service APIs
+
+#### ⚙️ Utilities
+
+- **Lombok** - boilerplate reduction
+- **SLF4J + Logback** - logging
+- **HikariCP** - connection pooling
+
+#### 🧪 Testing
+
+- **Spring Boot Test (JUnit 5, Mockito, MockMvc)**
+- **Spring Security Test**
+
+### 🧱 Microservices Topology
+
+| Service               | Port | Responsibility                                         |
+| --------------------- | ---: | ------------------------------------------------------ |
+| `api-gateway`         | 8080 | Public entrypoint, routing, centralized JWT validation |
+| `measurement-service` | 8081 | Quantity compare/convert/arithmetic/history APIs       |
+| `user-service`        | 8082 | Auth APIs, OTP, OAuth2, user resolution                |
+| `admin-server`        | 8085 | Spring Boot Admin dashboard                            |
+| `eureka-server`       | 8761 | Service registry/discovery                             |
+| `mysql` (docker)      | 3306 | `user_db` and `measurement_db`                         |
+
+### 🔀 Gateway Routes
+
+Configured in `api-gateway/src/main/resources/application.properties`:
+
+- `/api/v1/quantities/**` -> `measurement-service`
+- `/api/v1/auth/**` -> `user-service`
+- `/api/v1/users/**` -> `user-service`
+- `/oauth2/**` and `/login/oauth2/**` -> `user-service`
+
+### ▶️ Build / Run
+
+#### Option A - Run with Docker Compose (Recommended)
+
+1. Copy env template:
+
+```bash
+cp .env.example .env
 ```
-main
- └── dev
-      ├── feature/UC1-FeetEquality
-      ├── feature/UC2-InchEquality
-      ├── feature/UC3-GenericLength
-      ├── feature/UC4-YardEquality
-      ├── feature/UC5-UnitConversoion
-      ├── feature/UC6-UnitAddition
-      ├── feature/UC7-TargetUnitAddition
-      ├── feature/UC8-StandaloneUnit
-      ├── feature/UC9-WeightMeasurement
-      ├── feature/UC10-GenericQuantity
-      ├── feature/UC11-VolumeMeasurement
-      ├── feature/UC12-SubtractionAndDivision
-      ├── feature/UC13-CentralizedArithmeticLogic
-      └── feature/UC14-TemperatureMeasurementwithSelectiveArithmetic
+
+2. Fill required values in `.env`:
+
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `JWT_SECRET`
+- `JWT_EXPIRATION_MS`
+- `MAIL_USERNAME`
+- `MAIL_PASSWORD`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `CORS_ALLOWED_ORIGINS`
+- `OAUTH2_REDIRECT_URI`
+
+3. Start all services:
+
+```bash
+docker-compose up --build
 ```
 
----
+4. Stop all services:
 
-## 📅 17 Feb 2026  
-### 🔹 UC1 – Feet Measurement Equality  
-**Branch:** `feature/UC1-FeetEquality`
+```bash
+docker-compose down
+```
 
-### 🎯 Objective
-- Validate equality of two Feet measurements  
-- Implement proper `equals()` method  
-- Follow TDD approach  
+#### Option B - Production Compose Override
 
-### ✅ Implementation
-- Created Feet class  
-- Implemented equality logic  
-- Handled null and type safety  
-- Wrote JUnit 5 test cases  
-- [feature/UC1-FeetEquality](https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC1-FeetEquality)
+Use RDS and expose only gateway publicly:
 
----
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+```
 
-## 📅 18 Feb 2026  
-### 🔹 UC2 – Feet and Inches Measurement Equality  
-**Branch:** `feature/UC2-InchEquality`
+#### Option C - Run Services Individually (Maven)
 
-### 🎯 Objective
-- Compare Feet and Inches  
-- Ensure 12 inches = 1 foot  
+Run each module in separate terminals:
 
-### ✅ Implementation
-- Introduced conversion logic  
-- Implemented base unit comparison  
-- Improved equality handling  
-- [feature/UC2-InchEquality](https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC2-InchEquality)
+```bash
+cd eureka-server && mvn spring-boot:run
+cd user-service && mvn spring-boot:run
+cd measurement-service && mvn spring-boot:run
+cd api-gateway && mvn spring-boot:run
+cd admin-server && mvn spring-boot:run
+```
 
----
+### 🌐 Access URLs
 
-## 📅 19 Feb 2026  
-### 🔹 UC3 – Generic Quantity Class (DRY Principle)  
-**Branch:** `feature/UC3-GenericLength`
+- API Gateway: `http://localhost:8080`
+- Eureka Dashboard: `http://localhost:8761`
+- Admin Server UI: `http://localhost:8085`
 
-### 🎯 Objective
-- Remove duplication  
-- Introduce reusable `Quantity` class  
-- Apply DRY principle  
+#### Auth APIs (via gateway)
 
-### ✅ Implementation
-- Centralized conversion logic  
-- Removed unit-specific duplication  
-- Improved abstraction  
-- [feature/UC3-GenericLength](https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC3-GenericQuantityClassForDryPrinciple)
+Base: `http://localhost:8080/api/v1/auth`
 
----
+| Method | Endpoint                  | Auth Required     | Purpose                         |
+| ------ | ------------------------- | ----------------- | ------------------------------- |
+| POST   | `/register`               | No                | Register and receive JWT        |
+| POST   | `/login`                  | No                | Login and receive JWT           |
+| GET    | `/me`                     | Yes (JWT)         | Fetch current user profile      |
+| POST   | `/otp/send`               | No                | Send OTP email                  |
+| POST   | `/otp/verify`             | No                | Verify OTP                      |
+| PUT    | `/forgotPassword/{email}` | No (OTP verified) | Reset password via OTP flow     |
+| PUT    | `/resetPassword/{email}`  | Yes (JWT)         | Change password while logged in |
 
-## 📅 20 Feb 2026  
-### 🔹 UC4 – Extended Unit Support  
-**Branch:** `feature/UC4-YardEquality`
+#### Quantity APIs (via gateway)
 
-### 🎯 Objective
-- Support additional units (Yard, etc.)  
-- Make system scalable  
+Base: `http://localhost:8080/api/v1/quantities`
 
-### ✅ Implementation
-- Introduced Unit Enum  
-- Base unit conversion mapping  
-- Easily extensible structure  
-- [feature/UC4-YardEquality](https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC4-ExtendedUnit)
+| Method | Endpoint                          |
+| ------ | --------------------------------- |
+| POST   | `/compare`                        |
+| POST   | `/convert`                        |
+| POST   | `/add`                            |
+| POST   | `/subtract`                       |
+| POST   | `/divide`                         |
+| GET    | `/history/operation/{operation}`  |
+| GET    | `/history/type/{measurementType}` |
+| GET    | `/history/errored`                |
+| GET    | `/count/{operation}`              |
 
----
+### ⚙️ Configuration
 
-## 📅 20 Feb 2026  
-### 🔹 UC5 – Unit-to-Unit Conversion  
-**Branch:** `feature/UC5-UnitConversoion`
+- `docker-compose.yml`:
+  - Local development stack with MySQL + all five services.
+  - Uses healthchecks and dependency ordering for stable startup.
+- `docker-compose.prod.yml`:
+  - Disables local MySQL.
+  - Uses `RDS_ENDPOINT` for `user-service` and `measurement-service`.
+  - Exposes only gateway port `8080` publicly.
+- `init.sql`:
+  - Creates `user_db` and `measurement_db` if absent.
+  - Grants privileges for the configured app database user.
 
-### 🎯 Objective
-- Convert one unit into another  
+### 📂 Project Structure
 
-### ✅ Implementation
-- Implemented `convertTo()` method  
-- Centralized conversion logic  
-- Ensured precision-safe calculations  
-- [feature/UC5-UnitConversoion](https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC4-ExtendedUnit)
+```text
+quantity-measurement-app/
+├── admin-server/
+├── api-gateway/
+├── eureka-server/
+├── measurement-service/
+├── user-service/
+├── docker-compose.yml
+├── docker-compose.prod.yml
+├── init.sql
+├── .env.example
+├── .gitignore
+└── README.md
+```
 
----
+### ⚙️ Development Approach
 
-## 📅 20 Feb 2026  
-### 🔹 UC6 – Addition of Two Length Units  
-**Branch:** `feature/UC6-UnitAddition`
+> This project follows incremental Test-Driven Development (TDD):
 
-### 🎯 Objective
-- Add two quantities correctly  
+- Write tests first for each use case and service behavior.
+- Implement minimal changes to satisfy tests.
+- Refactor continuously while preserving behavior.
+- Scale architecture from monolith to microservices without losing domain correctness.
 
-### ✅ Implementation
-- Converted to base unit before addition  
-- Accurate arithmetic operations  
-- Clean and reusable method structure  
-- [feature/UC6-UnitAddition](https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC6-UnitAddition)
+### 📄 License
 
----
+> This project is licensed under the MIT License.
 
-## 📅 20 Feb 2026  
-### 🔹 UC7 – Addition with Target Unit Specification  
-**Branch:** `feature/UC7-TargetUnitAddition`
+### 👨‍💻 Author
 
-### 🎯 Objective
-- Add two quantities  
-- Return result in specified target unit  
-
-### ✅ Implementation
-- Implemented `add(quantity, targetUnit)`  
-- Converted result before returning  
-- Maintained precision and scalability  
-- [feature/UC7-TargetUnitAddition](https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC7-targetUnitAddition)
+**Abhishek Puri Goswami**
 
 ---
 
-## 📅 21 Feb 2026  
-### 🔹 UC8 – Refactoring Unit Enum to Standalone  
-**Branch:** `feature/UC8-StandaloneUnit`
-
-### 🎯 Objective
-- Separate Unit enum from Quantity class  
-- Improve modularity  
-- Enable multi-category support  
-
-### ✅ Implementation
-- Moved Unit enum to standalone file  
-- Improved separation of concerns  
-- Increased flexibility for new categories  
-- [feature/UC8-StandaloneUnit](https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC8-standalone)
-
----
-
-## 📅 21 Feb 2026  
-### 🔹 UC9 – Weight Measurement  
-**Branch:** `feature/UC9-WeightMeasurement`
-
-### 🎯 Objective
-- Extend application to support Weight category  
-- Maintain clean architecture  
-
-### ✅ Implementation
-- Introduced Weight units (Gram, Kilogram, etc.)  
-- Implemented base unit conversion  
-- Ensured category-safe equality  
-- Prevented cross-category comparison (Length ≠ Weight)  
-- [feature/UC9-WeightMeasurement](https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC9-WeightMeasurement)
-
----
-
-## 📅 21 Feb 2026  
-### 🔹 UC10 – Generic Quantity Class with Unit Interface for Multi-Category Support  
-**Branch:**  `feature/UC10-GenericQuantity`
-
-### 🎯 Objective
-- Create a fully generic Quantity system  
-- Support multiple measurement categories  
-- Apply interface-based design  
-
-### ✅ Implementation
-- Introduced `Unit` interface  
-- Implemented category-specific enums (LengthUnit, WeightUnit)  
-- Created Generic `Quantity<T extends Unit>` class  
-- Ensured:
-  - Type-safe unit handling  
-  - Category-safe operations  
-  - Scalable architecture  
-- [feature/UC10-GenericQuantity](https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC10-GenericQuantity)
-
----
-
-## 📅 22 Feb 2026  
-### 🔹 UC11 – Volume Measurement Support with Unit Interface Integration  
-**Branch:** `feature/UC11-VolumeMeasurement`
-
-### 🎯 Objective
-- Extend generic Quantity system to support Volume
-- Implement unit conversion within same category
-- Maintain strict category isolation
-
-### ✅ Implementation
-- Created `VolumeUnit` enum implementing `Unit` interface
-- Added units:
-  - Liter
-  - Milliliter
-- Implemented conversion logic inside enum
-- Enabled equality comparison across different volume units
-- Prevented cross-category comparison (Volume vs Length/Weight)
-- Preserved type safety using `Quantity<T extends Unit>`
-
-🔗 Branch Link:  
-https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC11-VOlumeMeasurement
-
----
-
-## 📅 23 Feb 2026  
-### 🔹 UC12 – Subtraction and Division for Compatible Quantities  
-**Branch:** `feature/UC12-ArithmeticOperations`
-
-### 🎯 Objective
-- Introduce arithmetic operations
-- Maintain dimensional correctness
-- Restrict arithmetic within same measurement category
-
-### ✅ Implementation
-- Implemented subtraction between compatible quantities
-- Implemented division operation
-- Converted values to base unit before arithmetic
-- Added validation for incompatible categories
-- Ensured safe arithmetic execution
-
-🔗 Branch Link:  
-https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC12-ArithmeticOperations
-
----
-
-## 📅 24 Feb 2026  
-### 🔹 UC13 – Centralized Arithmetic Logic Refactoring  
-**Branch:** `feature/UC13-CentralizedArithmeticLogic`
-
-### 🎯 Objective
-- Remove duplicated arithmetic logic
-- Centralize validation and arithmetic rules
-- Improve maintainability
-
-### ✅ Implementation
-- Created centralized arithmetic validation/service class
-- Moved arithmetic logic out of individual unit implementations
-- Reduced code duplication
-- Improved separation of concerns
-- Applied DRY principle
-
-🔗 Branch Link:  
-https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC13-CentralizedArithmeticLogic
-
----
-
-
-## 📅 25 Feb 2026  
-### 🔹 UC14 – Temperature Measurement with Selective Arithmetic  
-**Branch:** `feature/UC14-TemperatureMeasurementwithSelectiveArithmetic`
-
-### 🎯 Objective
-- Add Temperature measurement category
-- Handle non-linear conversion logic
-- Restrict invalid arithmetic operations
-
-### ✅ Implementation
-- Created `TemperatureUnit` enum implementing `Unit`
-- Added:
-  - Celsius
-  - Fahrenheit
-- Implemented offset-based conversion formula
-- Allowed equality comparison
-- Restricted arithmetic operations on absolute temperatures
-- Preserved category safety
-
-🔗 Branch Link:  
-https://github.com/Shriyanshtiwari-07/Quantity-Measurement-App/tree/feature/UC14-TemperatureMeasurementwithSelectiveArithmetic
+<div align="center">
+✨ Incrementally developed using TDD, now evolved into UC21 microservices architecture.
+</div>

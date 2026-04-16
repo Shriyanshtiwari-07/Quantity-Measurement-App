@@ -1,0 +1,11 @@
+# Place a copy of this .dockerignore inside each service folder.
+# Keeps the Docker build context small — Maven downloads fresh
+# inside the container, so local target/ is never needed.
+
+target/
+.idea/
+.settings/
+.classpath
+.project
+.factorypath
+*.log

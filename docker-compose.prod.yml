@@ -1,0 +1,37 @@
+# ─────────────────────────────────────────────────────────────
+# PRODUCTION — docker-compose.prod.yml
+#
+# Overrides docker-compose.yml for EC2 deployment.
+# Uses RDS instead of a local MySQL container.
+# Does NOT expose internal service ports publicly.
+#
+# Usage on EC2:
+#   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# To rebuild after code change:
+#   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# ─────────────────────────────────────────────────────────────
+
+services:
+
+  # Remove the local MySQL container — we use RDS instead
+  mysql:
+    deploy:
+      replicas: 0    # disables this service in prod
+
+  user-service:
+    environment:
+      USER_DB_URL: jdbc:mysql://${RDS_ENDPOINT}:3306/user_db?useSSL=true&serverTimezone=UTC
+    ports: []        # not exposed publicly — gateway handles traffic
+
+  measurement-service:
+    environment:
+      MEASUREMENT_DB_URL: jdbc:mysql://${RDS_ENDPOINT}:3306/measurement_db?useSSL=true&serverTimezone=UTC
+    ports: []
+
+  api-gateway:
+    ports:
+      - "8080:8080"  # only this port is open in EC2 security group
+
+  admin-server:
+    ports: []        # access via SSH tunnel only in prod (see below)
