@@ -23,7 +23,7 @@ import java.util.List;
  * the forwarded request. This controller simply reads X-User-Id to associate
  * operations with a user. No JWT parsing or Feign calls needed here.
  */
-@Slf4j
+@Slf4j 
 @RestController
 @RequestMapping("/api/v1/quantities")
 @Tag(name = "Quantity Measurements")
