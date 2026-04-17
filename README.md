@@ -217,13 +217,10 @@ quantity-measurement-app/
 - Refactor continuously while preserving behavior.
 - Scale architecture from monolith to microservices without losing domain correctness.
 
-### 📄 License
-
-> This project is licensed under the MIT License.
 
 ### 👨‍💻 Author
 
-**Abhishek Puri Goswami**
+**Shriyansh Tiwari**
 
 ---
 
